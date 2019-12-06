@@ -14,6 +14,16 @@ Adafruit_USBD_MIDI usb_midi;
 MIDI_CREATE_INSTANCE(Adafruit_USBD_MIDI, usb_midi, MIDI);
 
 Adafruit_NeoTrellis trellis;
+
+// Pad a string of length 'len' with nulls
+void pad_with_nulls(char* s, int len) {
+  int l = strlen(s);
+  for( int i=l;i<len; i++) {
+    s[i] = '\0';
+  }
+}
+
+
 //made a Dorian scale note table here, should be rearranged to use the buttons left to right, but currently they aren't
 int noteTable[] = {37,39,42,44,46,49,51,54,56,58,61,63,66,68,70,73};
 
@@ -36,7 +46,19 @@ TrellisCallback blink(keyEvent evt){
   return 0;
 }
 
+
 void setup() {
+  //Name the device
+  char mfgstr[32] = "The J.E.Park Co";  //manufacturer string
+  char prodstr[32] = "NeoTrellis 16"; //MIDI device name
+
+  pad_with_nulls(mfgstr, 32);
+  pad_with_nulls(prodstr, 32);
+  
+  USBDevice.setManufacturerDescriptor(mfgstr);
+  USBDevice.setProductDescriptor(prodstr);
+
+  
   // Initialize MIDI, and listen to all MIDI channels
   // This will also call usb_midi's begin()
   MIDI.begin(MIDI_CHANNEL_OMNI);
